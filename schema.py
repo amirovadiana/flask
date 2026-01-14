@@ -4,6 +4,7 @@ from errors import HttpError
 
 class BaseAdvertRequest(BaseModel):
     title: str
+    description: str
     author: str
 
     @field_validator('title')
@@ -11,6 +12,13 @@ class BaseAdvertRequest(BaseModel):
     def secure_title(cls, value: str):
         if len(value) > 150:
             raise ValueError('Title is too long')
+        return value
+    
+    @field_validator('description')
+    @classmethod
+    def secure_description(cls, value: str):
+        if len(value) > 500:
+            raise ValueError('Description is too long')
         return value
 
 
@@ -20,6 +28,7 @@ class CreateAdvertRequest(BaseAdvertRequest):
 
 class UpdateAdvertRequest(BaseAdvertRequest):
     title: str | None = None
+    description: str | None = None
     author: str | None = None
 
 

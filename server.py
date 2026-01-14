@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request
 from flask.views import MethodView
 from sqlalchemy.exc import IntegrityError
 from models import Session, Advertisement
@@ -47,12 +47,13 @@ class AdvertView(MethodView):
     def get(self, advert_id):
         advert = get_advert_by_id(advert_id)
         return jsonify(advert.convert_json)
-
+    
 
     def post(self):
         json_data = validate(CreateAdvertRequest, request.json)
         advert = Advertisement(
             title=json_data['title'],
+            description=json_data['description'],
             author=json_data['author'],
         )
         add_advert(advert)
@@ -64,9 +65,11 @@ class AdvertView(MethodView):
         advert = get_advert_by_id(advert_id)
         if 'title' in json_data:
             advert.title = json_data['title']
+        if 'description' in json_data:
+            advert.description = json_data['description']
         if 'author' in json_data:
             advert.author = json_data['author']
-        add_advert(advert)
+        request.session.commit()
         return jsonify(advert.id_json)
 
 
@@ -79,14 +82,20 @@ class AdvertView(MethodView):
 
 advert_view = AdvertView.as_view('advert_view')
 
-app.add_url_rule('/all_advertisements/', view_func=advert_view, methods=['POST'])
+
+@app.route('/advertisements/', methods=['GET'])
+def all_advertisements():
+    advertisements = request.session.query(Advertisement).all()
+    return render_template('all_advertisements.html', advertisements=advertisements)
+
+
+app.add_url_rule('/advertisements/', view_func=advert_view, methods=['POST'])
 
 app.add_url_rule(
-    '/all_advertisements/<int:advert_id>',
+    '/advertisements/<int:advert_id>',
     view_func=advert_view,
     methods=['GET', 'PATCH', 'DELETE']
 )
-
 
 
 if __name__ == '__main__':

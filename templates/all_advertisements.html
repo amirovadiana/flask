@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All advertisements</title>
+</head>
+<body>
+    <h1>All advertisements</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Date create</th>
+                <th>Author</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for advert in advertisements %}
+            <tr>
+                <td>{{ advert.id }}</td>
+                <td>{{ advert.title }}</td>
+                <td>{{ advert.description }}</td>
+                <td>{{ advert.date_create }}</td>
+                <td>{{ advert.author }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

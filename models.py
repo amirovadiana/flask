@@ -1,6 +1,5 @@
 import os
 import datetime
-from datetime import date
 import atexit
 from sqlalchemy import create_engine, Integer, String, DateTime, func
 from sqlalchemy.orm import sessionmaker, DeclarativeBase, mapped_column, Mapped
@@ -30,6 +29,7 @@ class Advertisement(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String)
+    description: Mapped[str] = mapped_column(String)
     date_create: Mapped[datetime.datetime] = mapped_column(
         DateTime,
         server_default=func.now(),
@@ -48,6 +48,7 @@ class Advertisement(Base):
         return{
             'id': self.id,
             'title': self.title,
+            'description': self.description,
             'date_create': self.date_create.isoformat(),
             'author': self.author,
         }
